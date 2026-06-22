@@ -1,5 +1,5 @@
 # Etapa 1: Build-ul aplicatiei
-FROM maven:3.9.6-eclipse-temurin-17 AS build
+FROM public.ecr.aws/docker/library/maven:3.9.6-eclipse-temurin-17 AS build
 WORKDIR /app
 
 # Copiem fisierul pom.xml si descarcam dependentele
@@ -11,13 +11,13 @@ COPY src ./src
 RUN mvn clean package -DskipTests
 
 # Etapa 2: Crearea imaginii pentru rulare
-FROM eclipse-temurin:17-jre-alpine
+FROM public.ecr.aws/amazoncorretto/amazoncorretto:17-al2-jre
 WORKDIR /app
 
 # Copiem JAR-ul rezultat din etapa de build
 COPY --from=build /app/target/*.jar app.jar
 
-# Expunem portul aplicatiei (asa cum e in application.properties)
+# Expunem portul aplicatiei
 EXPOSE 9090
 
 # Punctul de intrare pentru container
