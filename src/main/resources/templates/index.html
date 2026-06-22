@@ -1,90 +1,357 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="ro">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>AI Study Assistant – Acasă</title>
-    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.2/css/bootstrap.min.css}">
+
+    <link rel="stylesheet"
+          th:href="@{/webjars/bootstrap/5.3.2/css/bootstrap.min.css}">
+
     <style>
-        body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; }
-        .navbar { background: rgba(0,0,0,0.15); backdrop-filter: blur(8px); }
-        .hero-card { background: rgba(255,255,255,0.97); border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.25); padding: 3rem; }
-        .feature-icon { width: 44px; height: 44px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; margin-right: .75rem; }
-        .feature { background: rgba(255,255,255,0.9); border: 1px solid #eee; border-radius: 14px; padding: 1rem 1.25rem; }
-        footer { color: rgba(255,255,255,0.8); }
-        .btn-cta { padding: .75rem 1.25rem; }
+
+        body{
+            background: linear-gradient(135deg,#667eea 0%,#764ba2 100%);
+            min-height:100vh;
+
+            display:flex;
+            flex-direction:column;
+        }
+
+        .navbar{
+            background:rgba(0,0,0,.15);
+            backdrop-filter:blur(8px);
+        }
+
+        main{
+            flex:1;
+
+            display:flex;
+            flex-direction:column;
+
+            justify-content:center;
+            align-items:center;
+        }
+
+        .hero-card{
+            background:rgba(255,255,255,.97);
+
+            border-radius:20px;
+
+            box-shadow:0 20px 60px rgba(0,0,0,.25);
+
+            padding:3rem;
+        }
+
+        .btn-cta{
+            padding:.75rem 1.5rem;
+        }
+
+        .feature{
+            background:rgba(255,255,255,.92);
+
+            border:1px solid #eee;
+
+            border-radius:16px;
+
+            padding:1.5rem;
+
+            text-align:center;
+
+            height:100%;
+
+            transition:.2s ease;
+        }
+
+        .feature:hover{
+            transform:translateY(-4px);
+        }
+
+        .feature-header{
+            display:flex;
+
+            justify-content:center;
+
+            align-items:center;
+
+            margin-bottom:1rem;
+        }
+
+        .feature-icon{
+
+            width:50px;
+
+            height:50px;
+
+            border-radius:12px;
+
+            display:flex;
+
+            align-items:center;
+
+            justify-content:center;
+
+            font-size:1.3rem;
+
+            margin-right:.75rem;
+        }
+
+        footer{
+            color:rgba(255,255,255,.85);
+        }
+
+        @media(max-width:768px){
+
+            .hero-card{
+                padding:2rem;
+            }
+
+            .display-5{
+                font-size:2.2rem;
+            }
+        }
+
     </style>
+
 </head>
+
 <body>
+
 <nav class="navbar navbar-expand-lg navbar-dark">
-  <div class="container">
-    <a class="navbar-brand fw-semibold" href="/">🎓 AI Study Assistant</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navItems">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div id="navItems" class="collapse navbar-collapse">
-      <ul class="navbar-nav ms-auto">
-        <li class="nav-item"><a class="nav-link" href="/login">Autentificare</a></li>
-        <li class="nav-item"><a class="nav-link" href="/register">Înregistrare</a></li>
-      </ul>
+
+    <div class="container">
+
+        <a class="navbar-brand fw-semibold" href="/">
+            🎓 AI Study Assistant
+        </a>
+
+        <button class="navbar-toggler"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navItems">
+
+            <span class="navbar-toggler-icon"></span>
+
+        </button>
+
+        <div id="navItems"
+             class="collapse navbar-collapse">
+
+            <ul class="navbar-nav ms-auto">
+
+                <li class="nav-item">
+
+                    <a class="nav-link" href="/login">
+                        Autentificare
+                    </a>
+
+                </li>
+
+                <li class="nav-item">
+
+                    <a class="nav-link" href="/register">
+                        Înregistrare
+                    </a>
+
+                </li>
+
+            </ul>
+
+        </div>
+
     </div>
-  </div>
+
 </nav>
 
-<main class="container py-5">
-  <div class="row justify-content-center">
-    <div class="col-xl-8 col-lg-9">
-      <div class="hero-card text-center">
-        <h1 class="display-5 fw-bold mb-3">Învățare mai rapidă cu ajutorul AI</h1>
-        <p class="lead text-muted mb-4">
-          Adresează întrebări, primește explicații pe înțelesul tău și păstrează istoricul conversațiilor, într-un UI simplu și plăcut.
-        </p>
-        <div class="d-grid gap-3 d-sm-flex justify-content-sm-center mb-4">
-          <a href="/login" class="btn btn-primary btn-cta">Autentificare</a>
-          <a href="/register" class="btn btn-outline-secondary btn-cta">Înregistrare</a>
-        </div>
-        <div class="text-muted small">Nu listăm subiecte aici – alege-le când creezi o conversație.</div>
-      </div>
-    </div>
-  </div>
 
-  <div class="row g-3 mt-4">
-    <div class="col-md-6 col-lg-3">
-      <div class="feature h-100">
-        <div class="d-flex align-items-center mb-2">
-          <span class="feature-icon bg-primary bg-gradient text-white">💬</span>
-          <h6 class="m-0">Chat inteligent</h6>
+<main class="container py-5">
+
+    <div class="row justify-content-center w-100">
+
+        <div class="col-xl-8 col-lg-9">
+
+            <div class="hero-card text-center">
+
+                <h1 class="display-5 fw-bold mb-3">
+
+                    Învățare mai rapidă cu ajutorul AI
+
+                </h1>
+
+                <p class="lead text-muted mb-4">
+
+                    Adresează întrebări, primește explicații pe înțelesul tău
+                    și păstrează istoricul conversațiilor într-un UI simplu și modern.
+
+                </p>
+
+                <div class="d-grid gap-3 d-sm-flex justify-content-sm-center mb-4">
+
+                    <a href="/login"
+                       class="btn btn-primary btn-cta">
+
+                        Autentificare
+
+                    </a>
+
+                    <a href="/register"
+                       class="btn btn-outline-secondary btn-cta">
+
+                        Înregistrare
+
+                    </a>
+
+                </div>
+
+                <div class="text-muted small">
+
+                    Nu listăm subiecte aici – alege-le când creezi o conversație.
+
+                </div>
+
+            </div>
+
         </div>
-        <p class="text-muted mb-0">Răspunsuri AI personalizate, cu memorie pe ultimele mesaje din conversație.</p>
-      </div>
+
     </div>
-    <div class="col-md-6 col-lg-3">
-      <div class="feature h-100">
-        <div class="d-flex align-items-center mb-2">
-          <span class="feature-icon bg-success text-white">🧠</span>
-          <h6 class="m-0">Stiluri & roluri</h6>
+
+
+    <div class="row justify-content-center mt-5 w-100">
+
+        <div class="col-lg-10">
+
+            <div class="row g-4 justify-content-center">
+
+
+                <div class="col-md-6 col-lg-4">
+
+                    <div class="feature">
+
+                        <div class="feature-header">
+
+                            <span class="feature-icon bg-primary text-white">
+
+                                💬
+
+                            </span>
+
+                            <h5 class="m-0">
+
+                                Chat inteligent
+
+                            </h5>
+
+                        </div>
+
+                        <p class="text-muted mb-0">
+
+                            Răspunsuri AI personalizate, cu memorie pe ultimele mesaje din conversație.
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-6 col-lg-4">
+
+                    <div class="feature">
+
+                        <div class="feature-header">
+
+                            <span class="feature-icon bg-success text-white">
+
+                                🧠
+
+                            </span>
+
+                            <h5 class="m-0">
+
+                                Stiluri & roluri
+
+                            </h5>
+
+                        </div>
+
+                        <p class="text-muted mb-0">
+
+                            Alege stilul (simplu sau detaliat) și rolul AI (mentor, profesor sau coleg).
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-6 col-lg-4">
+
+                    <div class="feature">
+
+                        <div class="feature-header">
+
+                            <span class="feature-icon bg-info text-white">
+
+                                🗂️
+
+                            </span>
+
+                            <h5 class="m-0">
+
+                                Istoric salvat
+
+                            </h5>
+
+                        </div>
+
+                        <p class="text-muted mb-0">
+
+                            Conversațiile sunt salvate în siguranță și pot fi reluate oricând.
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
         </div>
-        <p class="text-muted mb-0">Alege stilul (simplu, detaliat) și rolul AI (mentor, profesor, coleg).</p>
-      </div>
+
     </div>
-    <div class="col-md-6 col-lg-3">
-      <div class="feature h-100">
-        <div class="d-flex align-items-center mb-2">
-          <span class="feature-icon bg-info text-white">🗂️</span>
-          <h6 class="m-0">Istoric salvat</h6>
-        </div>
-        <p class="text-muted mb-0">Conversațiile sunt salvate în siguranță pentru a fi reluate oricând.</p>
-      </div>
-    </div>
-  </div>
+
 </main>
 
-<footer class="py-4">
-  <div class="container text-center">
-    <small>© <span th:text="${#dates.format(#dates.createNow(), 'yyyy')}">2026</span> AI Study Assistant</small>
-  </div>
+
+<footer class="py-3 mt-auto">
+
+    <div class="container text-center">
+
+        <small>
+
+            ©
+            <span th:text="${#dates.format(#dates.createNow(), 'yyyy')}">
+
+                2026
+
+            </span>
+
+            AI Study Assistant
+
+        </small>
+
+    </div>
+
 </footer>
 
-<script th:src="@{/webjars/bootstrap/5.3.2/js/bootstrap.bundle.min.js}"></script>
+
+<script
+        th:src="@{/webjars/bootstrap/5.3.2/js/bootstrap.bundle.min.js}">
+</script>
+
 </body>
+
 </html>
