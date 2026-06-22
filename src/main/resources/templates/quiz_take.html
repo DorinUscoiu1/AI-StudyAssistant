@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title th:text="${quiz.title}">Quiz</title>
+  <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.2/css/bootstrap.min.css}">
+</head>
+<body class="bg-light">
+<header>
+</header>
+<nav class="navbar navbar-expand-lg navbar-dark" style="background: linear-gradient(135deg,#667eea,#764ba2)">
+  <div class="container">
+    <a class="navbar-brand" href="/dashboard">AI Study Assistant</a>
+    <div class="navbar-nav"><a class="nav-link" href="/quiz">Înapoi la quiz-uri</a></div>
+  </div>
+</nav>
+<div class="container py-4">
+  <div class="card">
+    <div class="card-body">
+      <h3 class="mb-3" th:text="${quiz != null ? quiz.title : 'Quiz'}">Quiz</h3>
+
+      <div th:if="${quiz == null}">
+        <div class="alert alert-danger">Quiz-ul nu a fost găsit.</div>
+      </div>
+
+      <div th:if="${quiz != null}">
+        <div th:if="${quiz.questions == null or quiz.questions.size() == 0}" class="alert alert-warning">
+          Acest quiz nu conține întrebări încă.
+        </div>
+
+        <form id="quizForm" th:if="${quiz.questions != null and quiz.questions.size() > 0}" th:action="@{/quiz/{id}/submit(id=${quiz.id})}" method="post">
+          <div th:each="q,iter : ${quiz.questions}" class="mb-4 question-block"
+               th:attr="data-qid=${q.id},data-correct=${q.correctOption != null ? q.correctOption : 'A'}">
+            <h6 th:text="${(iter.index + 1) + '. ' + (q.questionText != null ? q.questionText : 'Întrebare')}">Întrebare</h6>
+
+            <div class="form-check">
+              <input class="form-check-input" type="radio"
+                     th:name="${'q' + (q.id != null ? q.id : iter.index)}" value="A" th:id="${'q' + (q.id != null ? q.id : iter.index) + 'A'}">
+              <label class="form-check-label" th:for="${'q' + (q.id != null ? q.id : iter.index) + 'A'}"
+                     th:text="${q.optionA != null ? q.optionA : 'A'}"></label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio"
+                     th:name="${'q' + (q.id != null ? q.id : iter.index)}" value="B" th:id="${'q' + (q.id != null ? q.id : iter.index) + 'B'}">
+              <label class="form-check-label" th:for="${'q' + (q.id != null ? q.id : iter.index) + 'B'}"
+                     th:text="${q.optionB != null ? q.optionB : 'B'}"></label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio"
+                     th:name="${'q' + (q.id != null ? q.id : iter.index)}" value="C" th:id="${'q' + (q.id != null ? q.id : iter.index) + 'C'}">
+              <label class="form-check-label" th:for="${'q' + (q.id != null ? q.id : iter.index) + 'C'}"
+                     th:text="${q.optionC != null ? q.optionC : 'C'}"></label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio"
+                     th:name="${'q' + (q.id != null ? q.id : iter.index)}" value="D" th:id="${'q' + (q.id != null ? q.id : iter.index) + 'D'}">
+              <label class="form-check-label" th:for="${'q' + (q.id != null ? q.id : iter.index) + 'D'}"
+                     th:text="${q.optionD != null ? q.optionD : 'D'}"></label>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary">Trimite</button>
+        </form>
+
+        <div id="scoreBox" class="alert alert-info mt-3 d-none" style="display:none"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<script th:src="@{/webjars/bootstrap/5.3.2/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - AI Study Assistant</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.2/css/bootstrap.min.css}">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .conversation-card {
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+        }
+        .conversation-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        .topic-badge {
+            font-size: 0.8rem;
+        }
+        .btn-delete-conv { z-index: 2; }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/dashboard"> AI Study Assistant</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="/quiz">Quiz</a></li>
+                    <li class="nav-item">
+                        <span class="nav-link text-white"> <span th:text="${username}"></span></span>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout">Deconectare</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <!-- Header -->
+        <div class="row mb-4">
+            <div class="col-md-8">
+                <h2>Conversațiile tale</h2>
+                <p class="text-muted">Creează o conversație nouă sau continuă una existentă</p>
+            </div>
+            <div class="col-md-4 text-end">
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newConversationModal">
+                     Conversație Nouă
+                </button>
+            </div>
+        </div>
+
+        <!-- Error Message -->
+        <div th:if="${param.error}" class="alert alert-danger" role="alert" th:text="${param.error}"></div>
+
+        <!-- Conversations List -->
+        <div class="row" id="convList">
+            <div th:if="${conversations.isEmpty()}" class="col-12" id="emptyState">
+                <div class="alert alert-info text-center">
+                    <h5>Nu ai nicio conversație încă</h5>
+                    <p>Începe prin a crea prima ta conversație folosind butonul de mai sus!</p>
+                </div>
+            </div>
+
+            <div th:each="conv : ${conversations}" class="col-md-6 col-lg-4 mb-3 conv-card"
+                 th:attr="data-card-id=${conv.id}">
+                <div class="card conversation-card h-100 position-relative">
+                    <button type="button"
+                            class="btn btn-sm btn-outline-danger position-absolute end-0 m-2 btn-delete-conv"
+                            th:attr="data-id=${conv.id},data-title=${conv.title}">
+                        🗑️
+                    </button>
+                    <div class="card-body">
+                        <h5 class="card-title" th:text="${conv.title}">Titlu Conversație</h5>
+                        <p class="card-text text-muted">
+                            <span class="badge bg-primary topic-badge" th:text="${conv.topic.displayName}">Topic</span>
+                        </p>
+                        <p class="card-text">
+                            <small class="text-muted">
+                                Întrebări: <span th:text="${conv.questions != null ? conv.questions.size() : 0}">0</span>
+                            </small>
+                        </p>
+                        <a th:href="@{/dashboard/conversation/{id}(id=${conv.id})}"
+                           class="stretched-link" aria-label="Deschide conversația"></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Conversation Modal -->
+    <div class="modal fade" id="newConversationModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Conversație Nouă</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="modalError" class="alert alert-danger d-none"></div>
+                    <form id="newConversationForm">
+                        <div class="mb-3">
+                            <label for="title" class="form-label">Titlu *</label>
+                            <input type="text" class="form-control" id="title" required maxlength="200">
+                        </div>
+                        <div class="mb-3">
+                            <label for="topic" class="form-label">Subiect *</label>
+                            <select class="form-select" id="topic" required>
+                                <option value="">Selectează subiectul...</option>
+                                <option th:each="topic : ${topics}" th:value="${topic}" th:text="${topic.displayName}"></option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anulează</button>
+                    <button type="button" class="btn btn-primary" id="createConversationBtn">Creează</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirm Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Șterge conversația</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="deleteMessage">Ești sigur că vrei să ștergi conversația?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anulează</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Șterge</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script th:src="@{/webjars/jquery/3.7.1/jquery.min.js}"></script>
+    <script th:src="@{/webjars/bootstrap/5.3.2/js/bootstrap.bundle.min.js}"></script>
+    <script>
+        $(document).ready(function() {
+            $('#createConversationBtn').on('click', function() {
+                $('#modalError').addClass('d-none');
+
+                const formData = {
+                    title: $('#title').val(),
+                    topic: $('#topic').val()
+                };
+
+                if (!formData.title || !formData.topic) {
+                    $('#modalError').text('Te rugăm să completezi toate câmpurile!').removeClass('d-none');
+                    return;
+                }
+
+                $.ajax({
+                    url: '/api/conversations',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(formData),
+                    success: function(response) {
+                        window.location.href = '/dashboard/conversation/' + response.conversationId;
+                    },
+                    error: function(xhr) {
+                        const response = xhr.responseJSON;
+                        $('#modalError').text(response.error || 'A apărut o eroare!').removeClass('d-none');
+                    }
+                });
+            });
+        });
+
+        let deleteId = null;
+        $(document).on('click', '.btn-delete-conv', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            deleteId = $(this).data('id');
+            const title = $(this).data('title') || '';
+            $('#deleteMessage').text('Ești sigur că vrei să ștergi conversația: ' + title + ' ?');
+            new bootstrap.Modal(document.getElementById('deleteModal')).show();
+        });
+
+        function updateEmptyState() {
+            if ($('.conv-card').length === 0) {
+                if (!$('#emptyState').length) {
+                    $('#convList').prepend(
+                        '<div class="col-12" id="emptyState">\
+                           <div class="alert alert-info text-center">\
+                             <h5>Nu ai nicio conversație încă</h5>\
+                             <p>Începe prin a crea prima ta conversație folosind butonul de mai sus!</p>\
+                           </div>\
+                         </div>'
+                    );
+                }
+            } else {
+                $('#emptyState').remove();
+            }
+        }
+
+        $('#confirmDeleteBtn').on('click', function() {
+            if (!deleteId) return;
+            const idToDelete = deleteId;
+            $.ajax({
+                url: '/api/conversations/' + idToDelete,
+                method: 'DELETE',
+                success: function() {
+                    // remove card right away, then hide modal
+                    $('.conv-card[data-card-id="' + idToDelete + '"]').remove();
+                    updateEmptyState();
+                    const modalEl = document.getElementById('deleteModal');
+                    bootstrap.Modal.getInstance(modalEl)?.hide();
+                },
+                error: function(xhr) {
+                    const response = xhr.responseJSON;
+                    alert(response?.error || 'Nu s-a putut șterge conversația');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

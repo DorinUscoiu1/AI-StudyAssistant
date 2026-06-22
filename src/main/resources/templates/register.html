@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Înregistrare - AI Study Assistant</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.2/css/bootstrap.min.css}">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 0;
+        }
+        .register-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        .logo {
+            display: block;
+            margin: 0 auto 1.5rem;
+            max-width: 150px;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="register-card">
+                    <header>
+
+                    </header>
+
+                    <h2 class="text-center mb-4">Înregistrare</h2>
+
+                    <div id="errorMessage" class="alert alert-danger d-none" role="alert"></div>
+                    <div id="successMessage" class="alert alert-success d-none" role="alert"></div>
+
+                    <form id="registerForm">
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username *</label>
+                            <input type="text" class="form-control" id="username" name="username" required>
+                            <div class="invalid-feedback">Username-ul este obligatoriu.</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email *</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                            <div class="invalid-feedback">Introdu un email valid.</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Parolă * (minim 8 caractere)</label>
+                            <input type="password" class="form-control" id="password" name="password" required minlength="8">
+                            <div class="invalid-feedback">Parola trebuie să aibă cel puțin 8 caractere.</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="confirmPassword" class="form-label">Confirmă Parola *</label>
+                            <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                            <div class="invalid-feedback">Parolele nu coincid.</div>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Înregistrare</button>
+                        </div>
+                    </form>
+
+                    <hr class="my-4">
+
+                    <div class="text-center">
+                        <p class="mb-0">Ai deja cont? <a href="/login">Autentifică-te aici</a></p>
+                        <p class="mt-2"><a href="/">← Înapoi la pagina principală</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script th:src="@{/webjars/jquery/3.7.1/jquery.min.js}"></script>
+    <script th:src="@{/webjars/bootstrap/5.3.2/js/bootstrap.bundle.min.js}"></script>
+    <script>
+        $(document).ready(function() {
+            $('#registerForm').on('submit', function(e) {
+                e.preventDefault();
+
+                // Clear previous validation
+                $('.is-invalid').removeClass('is-invalid');
+                $('#errorMessage').addClass('d-none');
+                $('#successMessage').addClass('d-none');
+
+                // Validate passwords match
+                const password = $('#password').val();
+                const confirmPassword = $('#confirmPassword').val();
+
+                if (password !== confirmPassword) {
+                    $('#confirmPassword').addClass('is-invalid');
+                    $('#errorMessage').text('Parolele nu coincid!').removeClass('d-none');
+                    return;
+                }
+
+                // Submit registration
+                const formData = {
+                    username: $('#username').val(),
+                    email: $('#email').val(),
+                    password: password
+                };
+
+                $.ajax({
+                    url: '/api/auth/register',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(formData),
+                    success: function(response) {
+                        $('#successMessage').text('Înregistrare reușită! Redirecționare către pagina de autentificare...').removeClass('d-none');
+                        setTimeout(function() {
+                            window.location.href = '/login';
+                        }, 2000);
+                    },
+                    error: function(xhr) {
+                        const response = xhr.responseJSON;
+                        if (response.error) {
+                            $('#errorMessage').text(response.error).removeClass('d-none');
+                        } else if (response.username || response.email || response.password) {
+                            let errorMsg = '';
+                            if (response.username) errorMsg += response.username + ' ';
+                            if (response.email) errorMsg += response.email + ' ';
+                            if (response.password) errorMsg += response.password;
+                            $('#errorMessage').text(errorMsg).removeClass('d-none');
+                        } else {
+                            $('#errorMessage').text('A apărut o eroare la înregistrare.').removeClass('d-none');
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
+

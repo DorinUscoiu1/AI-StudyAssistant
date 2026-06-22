@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rezultat Quiz</title>
+  <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.2/css/bootstrap.min.css}">
+</head>
+<body class="bg-light">
+<header>
+</header>
+<nav class="navbar navbar-expand-lg navbar-dark" style="background: linear-gradient(135deg,#667eea,#764ba2)">
+  <div class="container">
+    <a class="navbar-brand" href="/dashboard">AI Study Assistant</a>
+    <div class="navbar-nav"><a class="nav-link" href="/quiz">Înapoi la quiz-uri</a></div>
+  </div>
+</nav>
+<div class="container py-4">
+  <div class="card">
+    <div class="card-body">
+      <h3 class="mb-3">Rezultat</h3>
+      <p class="lead">Scor: <strong th:text="${attempt.score}">0</strong> / <span th:text="${attempt.total}">0</span></p>
+      <a href="/quiz" class="btn btn-primary">Înapoi la lista de quiz-uri</a>
+    </div>
+  </div>
+</div>
+<script th:src="@{/webjars/bootstrap/5.3.2/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

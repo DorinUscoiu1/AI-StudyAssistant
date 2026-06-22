@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz-uri</title>
+  <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.2/css/bootstrap.min.css}">
+</head>
+<body class="bg-light">
+<header>
+</header>
+<nav class="navbar navbar-expand-lg navbar-dark" style="background: linear-gradient(135deg,#667eea,#764ba2)">
+  <div class="container">
+    <a class="navbar-brand" href="/dashboard">AI Study Assistant</a>
+    <div class="navbar-nav"><a class="nav-link active" href="/quiz">Quiz</a></div>
+  </div>
+</nav>
+<div class="container py-4">
+  <div th:if="${param.error}" class="alert alert-danger" th:text="${param.error}"></div>
+
+  <div class="card mb-3">
+    <div class="card-body">
+      <form method="post" th:action="@{/quiz/generate}">
+        <div class="row g-2 align-items-end">
+          <div class="col-md-6">
+            <label class="form-label" for="topicSel">Subiect</label>
+            <select class="form-select" id="topicSel" name="topic" required>
+              <option value="">Alege...</option>
+              <option th:each="t : ${topics}" th:value="${t}" th:text="${t.displayName}"></option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label" for="countInp">Întrebări</label>
+            <input class="form-control" id="countInp" type="number" name="count" min="3" max="15" value="5">
+          </div>
+          <div class="col-md-3">
+            <button class="btn btn-primary w-100" type="submit">Generează Quiz</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="row">
+    <div th:if="${quizzes.isEmpty()}" class="col-12">
+      <div class="alert alert-info">Nu ai încă niciun quiz. Creează unul mai sus.</div>
+    </div>
+    <div th:each="q : ${quizzes}" class="col-md-6">
+      <div class="card mb-3">
+        <div class="card-body">
+          <h5 class="card-title" th:text="${q.title}">Titlu</h5>
+          <div class="mb-2"><span class="badge bg-secondary" th:text="${q.topic.displayName}">Topic</span></div>
+          <a class="btn btn-outline-primary" th:href="@{/quiz/{id}(id=${q.id})}">Start</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script th:src="@{/webjars/bootstrap/5.3.2/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>
