@@ -22,6 +22,7 @@ import java.util.regex.Pattern;
 public class QuizService {
 
     private final QuizRepository quizRepository;
+    private final SqsService sqsService;
     private final QuizAttemptRepository attemptRepository;
     private final UserService userService;
     private final AIService aiService;
@@ -32,7 +33,7 @@ public class QuizService {
     @Transactional
     public Quiz generateQuiz(String username, Topic topic, int count) {
         User user = userService.findByUsername(username);
-
+        sqsService.sendQuizEvent(username, topic.getDisplayName(), count);
         // 1. Construim promptul pentru AI
         String prompt = "Generează în limba română un quiz de exact " + count +
                 " întrebări (nivel liceu) pentru subiectul: '" + topic.getDisplayName() + "'. " +
